@@ -27,24 +27,31 @@ Strategy-Backtesting-Engine/
 │       │   └── metrics.py      # Sharpe, CAGR, Drawdown, Profit Factor math
 │       └── schemas/
 │           └── backtest.py     # Pydantic schemas (BacktestRequest, BacktestResponse)
-└── frontend/                   # Next.js 14 Web Application
-    ├── package.json            # React, Next.js, Monaco, Lightweight Charts, Recharts
+└── frontend/                   # Next.js 16 Web Application
+    ├── package.json            # React 19, Next.js 16, Monaco, Lightweight Charts, Recharts
     ├── src/
     │   ├── app/
-    │   │   ├── page.tsx        # Main workbench UI state & tab controller
+    │   │   ├── page.tsx        # High-level declarative workbench layout
     │   │   ├── layout.tsx      # App shell root layout
-    │   │   └── globals.css     # Dark mode theme & Tailwind imports
+    │   │   └── globals.css     # Light/Dark glassmorphism theme & Tailwind imports
+    │   ├── hooks/
+    │   │   ├── useTheme.ts     # Theme state, DOM class sync, & localStorage persistence
+    │   │   └── useBacktest.ts  # Backtest execution, parameter state, & API orchestrator
     │   ├── components/
-    │   │   ├── Navbar.tsx            # Header navigation bar & system status badge
-    │   │   ├── TickerSelector.tsx    # Popular index chips & symbol search bar
-    │   │   ├── CodeEditor.tsx        # Monaco Python IDE & strategy parameters
+    │   │   ├── Navbar.tsx            # Header navigation bar & theme toggle
+    │   │   ├── TickerSelector.tsx    # Global asset index chips & search autocomplete
+    │   │   ├── BacktestControls.tsx  # 6-column timeframe, capital, fee parameter inputs
+    │   │   ├── CodeEditor.tsx        # Monaco Python IDE & strategy parameter sliders
     │   │   ├── CandlestickChart.tsx  # TradingView Lightweight Charts v5 + Trade Markers
-    │   │   ├── EquityChart.tsx       # Recharts Strategy Equity vs Benchmark & Drawdown Area
+    │   │   ├── EquityChart.tsx       # Recharts Strategy Equity vs Benchmark & Drawdown
     │   │   ├── MetricsOverview.tsx   # Stat cards (Return, CAGR, Sharpe, Drawdown)
-    │   │   └── TradesTable.tsx       # Execution history table with signals & fees
+    │   │   ├── TradesTable.tsx       # Execution history table with signals & fees
+    │   │   └── ConsoleViewer.tsx     # Terminal diagnostic execution logs tab viewer
     │   └── lib/
     │       ├── api.ts          # API fetch wrappers (fetchGlobalIndices, runBacktestApi)
-    │       └── types.ts        # TypeScript interface definitions
+    │       ├── types.ts        # TypeScript interface definitions
+    │       ├── stockCatalog.ts # 50+ Global stocks & indices catalog with search
+    │       └── strategies.ts   # 18 Pre-built quantitative strategy catalog & code templates
 ```
 
 ---

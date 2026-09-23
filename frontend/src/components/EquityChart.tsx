@@ -16,28 +16,31 @@ import { EquityDataPoint } from "@/lib/types";
 import { LineChart as LineChartIcon, Activity } from "lucide-react";
 
 interface EquityChartProps {
+  theme?: "dark" | "light";
   equityCurve: EquityDataPoint[];
 }
 
-export const EquityChart: React.FC<EquityChartProps> = ({ equityCurve }) => {
+export const EquityChart: React.FC<EquityChartProps> = ({ theme = "dark", equityCurve }) => {
   if (equityCurve.length === 0) return null;
+
+  const isLight = theme === "light";
 
   return (
     <div className="flex flex-col h-full glass-card rounded-2xl overflow-hidden shadow-2xl p-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/80 dark:border-white/5">
         <div className="flex items-center space-x-2.5">
-          <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+          <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400">
             <LineChartIcon className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-bold text-sm text-zinc-100 tracking-tight">Portfolio Performance vs Benchmark</h3>
-            <p className="text-[11px] text-zinc-400">Strategy Equity Growth vs Buy & Hold Benchmark with Drawdown Profile</p>
+            <h3 className="font-bold text-sm text-slate-900 dark:text-zinc-100 tracking-tight">Portfolio Performance vs Benchmark</h3>
+            <p className="text-[11px] text-slate-500 dark:text-zinc-400">Strategy Equity Growth vs Buy & Hold Benchmark with Drawdown Profile</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
             {equityCurve.length} Data Points
           </span>
         </div>
@@ -58,19 +61,19 @@ export const EquityChart: React.FC<EquityChartProps> = ({ equityCurve }) => {
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.04)" />
+            <CartesianGrid strokeDasharray="3 3" stroke={isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.04)"} />
 
             <XAxis
               dataKey="date"
-              stroke="#52525b"
-              tick={{ fontSize: 11, fill: "#71717a" }}
+              stroke={isLight ? "#94a3b8" : "#52525b"}
+              tick={{ fontSize: 11, fill: isLight ? "#334155" : "#71717a" }}
               tickFormatter={(val) => val.slice(0, 7)}
             />
 
             <YAxis
               yAxisId="equity"
-              stroke="#52525b"
-              tick={{ fontSize: 11, fill: "#71717a" }}
+              stroke={isLight ? "#94a3b8" : "#52525b"}
+              tick={{ fontSize: 11, fill: isLight ? "#334155" : "#71717a" }}
               domain={["auto", "auto"]}
               tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
             />
@@ -86,13 +89,13 @@ export const EquityChart: React.FC<EquityChartProps> = ({ equityCurve }) => {
 
             <Tooltip
               contentStyle={{
-                backgroundColor: "rgba(10, 12, 18, 0.85)",
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(10, 12, 18, 0.85)",
                 backdropFilter: "blur(16px)",
-                borderColor: "rgba(255, 255, 255, 0.12)",
+                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.12)",
                 borderRadius: "1rem",
-                boxShadow: "0 16px 32px 0 rgba(0, 0, 0, 0.5)",
+                boxShadow: isLight ? "0 16px 32px 0 rgba(15, 23, 42, 0.1)" : "0 16px 32px 0 rgba(0, 0, 0, 0.5)",
                 fontSize: "12px",
-                color: "#f4f4f5",
+                color: isLight ? "#0f172a" : "#f4f4f5",
                 padding: "10px 14px",
               }}
               formatter={(value: any, name: any) => {

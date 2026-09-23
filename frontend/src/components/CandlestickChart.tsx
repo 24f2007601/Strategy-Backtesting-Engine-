@@ -12,9 +12,10 @@ import {
   Time,
 } from "lightweight-charts";
 import { CandlestickPoint, TradeRecord } from "@/lib/types";
-import { BarChart2, TrendingUp } from "lucide-react";
+import { BarChart2 } from "lucide-react";
 
 interface CandlestickChartProps {
+  theme?: "dark" | "light";
   candlesticks: CandlestickPoint[];
   trades: TradeRecord[];
   ticker: string;
@@ -22,6 +23,7 @@ interface CandlestickChartProps {
 }
 
 export const CandlestickChart: React.FC<CandlestickChartProps> = ({
+  theme = "dark",
   candlesticks,
   trades,
   ticker,
@@ -38,34 +40,35 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
       chartRef.current = null;
     }
 
+    const isLight = theme === "light";
     const container = chartContainerRef.current;
     const chart = createChart(container, {
       layout: {
-        background: { type: ColorType.Solid, color: "#090a0f" },
-        textColor: "#71717a",
+        background: { type: ColorType.Solid, color: "transparent" },
+        textColor: isLight ? "#0f172a" : "#a1a1aa",
       },
       grid: {
-        vertLines: { color: "rgba(255, 255, 255, 0.03)" },
-        horzLines: { color: "rgba(255, 255, 255, 0.03)" },
+        vertLines: { color: isLight ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.03)" },
+        horzLines: { color: isLight ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.03)" },
       },
       crosshair: {
         mode: 1,
         vertLine: {
-          color: "rgba(255, 255, 255, 0.2)",
+          color: isLight ? "rgba(15, 23, 42, 0.35)" : "rgba(255, 255, 255, 0.2)",
           width: 1,
           style: 3,
         },
         horzLine: {
-          color: "rgba(255, 255, 255, 0.2)",
+          color: isLight ? "rgba(15, 23, 42, 0.35)" : "rgba(255, 255, 255, 0.2)",
           width: 1,
           style: 3,
         },
       },
       rightPriceScale: {
-        borderColor: "rgba(255, 255, 255, 0.08)",
+        borderColor: isLight ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.08)",
       },
       timeScale: {
-        borderColor: "rgba(255, 255, 255, 0.08)",
+        borderColor: isLight ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.08)",
         timeVisible: true,
         secondsVisible: false,
       },
@@ -110,7 +113,7 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
 
     // 3. Add Volume Series
     const volumeSeries = chart.addSeries(HistogramSeries, {
-      color: "rgba(255, 255, 255, 0.08)",
+      color: isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)",
       priceFormat: {
         type: "volume",
       },
@@ -127,7 +130,7 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
     const formattedVolume = candlesticks.map((item) => ({
       time: item.time as Time,
       value: item.volume,
-      color: item.close >= item.open ? "rgba(16, 185, 129, 0.18)" : "rgba(244, 63, 94, 0.18)",
+      color: item.close >= item.open ? "rgba(16, 185, 129, 0.22)" : "rgba(244, 63, 94, 0.22)",
     }));
 
     volumeSeries.setData(formattedVolume);
@@ -149,29 +152,29 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
         chartRef.current = null;
       }
     };
-  }, [candlesticks, trades]);
+  }, [candlesticks, trades, theme]);
 
   return (
     <div className="flex flex-col h-full glass-card rounded-2xl overflow-hidden shadow-2xl">
-      <div className="p-3.5 bg-zinc-950/70 border-b border-white/5 flex items-center justify-between flex-wrap gap-2">
+      <div className="p-3.5 bg-slate-100/90 dark:bg-zinc-950/70 border-b border-slate-200 dark:border-white/5 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center space-x-2.5">
-          <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+          <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
             <BarChart2 className="w-4 h-4" />
           </div>
           <div>
-            <span className="font-bold text-sm text-zinc-100">{tickerName}</span>
-            <span className="ml-2 text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg shadow-sm">
+            <span className="font-bold text-sm text-slate-900 dark:text-zinc-100">{tickerName}</span>
+            <span className="ml-2 text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20 px-2 py-0.5 rounded-lg shadow-sm">
               {ticker}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4 text-xs font-semibold text-zinc-400">
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px]">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]" /> BUY Marker
+        <div className="flex items-center space-x-4 text-xs font-bold text-slate-700 dark:text-zinc-400">
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_8px_#10b981]" /> BUY Marker
           </span>
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[11px]">
-            <span className="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_8px_#f43f5e]" /> SELL Marker
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-red-500/10 border border-rose-300 dark:border-red-500/20 text-rose-700 dark:text-red-400 text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-rose-500 dark:bg-red-400 shadow-[0_0_8px_#f43f5e]" /> SELL Marker
           </span>
         </div>
       </div>

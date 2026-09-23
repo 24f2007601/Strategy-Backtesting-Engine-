@@ -25,7 +25,8 @@
 - **Built-in Strategies**: Pre-packaged algorithms including SMA Crossover, RSI Mean Reversion, and Momentum Breakout.
 
 ### ✅ Phase 2: Next.js + Tailwind CSS Workbench & Financial Charting (COMPLETED)
-- **Glassmorphism Design System Overhaul**: Engineered a 10-year Senior Design Engineer grade frosted glass theme with multi-layered ambient glowing mesh blobs, specular inner borders (`border-white/10`), deep ambient shadows, and custom translucent dark glass scrollbars.
+- **Glassmorphism Design System & Light Mode Theme**: Engineered a 10-year Senior Design Engineer grade glassmorphism design system supporting both **Dark Mode** (obsidian canvas with glowing neon accents) and **Light Mode** (slate-50 canvas with crisp frosted glass panels and high contrast typography) with instant theme persistence.
+- **Header Theme Toggle Button**: Added a glass theme switcher in [`Navbar.tsx`](file:///c:/Users/prith/Projects/Strategy-Backtesting-Engine-/frontend/src/components/Navbar.tsx) featuring `Sun` and `Moon` icons.
 - **18 Pre-Built Quantitative Strategy Catalog**: Integrated a glass strategy dropdown selector in [`CodeEditor.tsx`](file:///c:/Users/prith/Projects/Strategy-Backtesting-Engine-/frontend/src/components/CodeEditor.tsx) featuring 18 ready-to-test strategies grouped into 4 categories (*Trend Following*, *Mean Reversion*, *Momentum & Breakout*, *Advanced Quant*).
 - **Next.js App Router**: Workbench UI using React, Tailwind CSS, and dark-mode styling.
 - **Floating Frosted Navbar**: Glass header with pulsing system telemetry badges and glowing logo mark.
