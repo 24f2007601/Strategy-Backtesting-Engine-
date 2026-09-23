@@ -13,6 +13,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { EquityDataPoint } from "@/lib/types";
+import { LineChart as LineChartIcon, Activity } from "lucide-react";
 
 interface EquityChartProps {
   equityCurve: EquityDataPoint[];
@@ -22,52 +23,77 @@ export const EquityChart: React.FC<EquityChartProps> = ({ equityCurve }) => {
   if (equityCurve.length === 0) return null;
 
   return (
-    <div className="flex flex-col h-full bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-xl p-4">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="font-bold text-sm text-zinc-100">Portfolio Performance vs Benchmark</h3>
-          <p className="text-xs text-zinc-400">Equity growth over time and drawdown profile</p>
+    <div className="flex flex-col h-full glass-card rounded-2xl overflow-hidden shadow-2xl p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+        <div className="flex items-center space-x-2.5">
+          <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <LineChartIcon className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="font-bold text-sm text-zinc-100 tracking-tight">Portfolio Performance vs Benchmark</h3>
+            <p className="text-[11px] text-zinc-400">Strategy Equity Growth vs Buy & Hold Benchmark with Drawdown Profile</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            {equityCurve.length} Data Points
+          </span>
         </div>
       </div>
 
+      {/* Chart Canvas */}
       <div className="w-full flex-1 min-h-[380px]">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={equityCurve} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
             <defs>
               <linearGradient id="drawdownGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="equityLineGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#34d399" />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#18181b" />
+
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.04)" />
+
             <XAxis
               dataKey="date"
-              stroke="#71717a"
-              tick={{ fontSize: 11 }}
+              stroke="#52525b"
+              tick={{ fontSize: 11, fill: "#71717a" }}
               tickFormatter={(val) => val.slice(0, 7)}
             />
+
             <YAxis
               yAxisId="equity"
-              stroke="#71717a"
-              tick={{ fontSize: 11 }}
-              domain={['auto', 'auto']}
+              stroke="#52525b"
+              tick={{ fontSize: 11, fill: "#71717a" }}
+              domain={["auto", "auto"]}
               tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
             />
+
             <YAxis
               yAxisId="drawdown"
               orientation="right"
-              stroke="#ef4444"
-              tick={{ fontSize: 11 }}
-              domain={[0, 'auto']}
+              stroke="#f43f5e"
+              tick={{ fontSize: 11, fill: "#f43f5e" }}
+              domain={[0, "auto"]}
               tickFormatter={(val) => `-${val}%`}
             />
+
             <Tooltip
               contentStyle={{
-                backgroundColor: "#09090b",
-                borderColor: "#27272a",
-                borderRadius: "0.5rem",
+                backgroundColor: "rgba(10, 12, 18, 0.85)",
+                backdropFilter: "blur(16px)",
+                borderColor: "rgba(255, 255, 255, 0.12)",
+                borderRadius: "1rem",
+                boxShadow: "0 16px 32px 0 rgba(0, 0, 0, 0.5)",
                 fontSize: "12px",
                 color: "#f4f4f5",
+                padding: "10px 14px",
               }}
               formatter={(value: any, name: any) => {
                 if (name === "Strategy Equity") return [`$${Number(value).toLocaleString()}`, name];
@@ -76,16 +102,19 @@ export const EquityChart: React.FC<EquityChartProps> = ({ equityCurve }) => {
                 return [value, name];
               }}
             />
-            <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
+
+            <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "12px" }} />
+
             <Area
               yAxisId="drawdown"
               type="monotone"
               dataKey="drawdown_pct"
               name="Drawdown %"
               fill="url(#drawdownGradient)"
-              stroke="#ef4444"
-              strokeWidth={1}
+              stroke="#f43f5e"
+              strokeWidth={1.5}
             />
+
             <Line
               yAxisId="equity"
               type="monotone"
@@ -95,12 +124,13 @@ export const EquityChart: React.FC<EquityChartProps> = ({ equityCurve }) => {
               strokeWidth={2.5}
               dot={false}
             />
+
             <Line
               yAxisId="equity"
               type="monotone"
               dataKey="benchmark_value"
               name="Benchmark (Buy & Hold)"
-              stroke="#3b82f6"
+              stroke="#38bdf8"
               strokeWidth={1.5}
               strokeDasharray="4 4"
               dot={false}

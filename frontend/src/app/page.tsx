@@ -8,12 +8,24 @@ import { CandlestickChart } from "@/components/CandlestickChart";
 import { EquityChart } from "@/components/EquityChart";
 import { MetricsOverview } from "@/components/MetricsOverview";
 import { TradesTable } from "@/components/TradesTable";
-import { fetchGlobalIndices, runBacktestApi } from "@/lib/api";
+import { fetchGlobalIndices, runBacktestApi, DEFAULT_INDICES } from "@/lib/api";
 import { BacktestRequest, BacktestResponse, TickerInfo } from "@/lib/types";
-import { BarChart3, LineChart, History, Terminal, Calendar, DollarSign, RefreshCw, AlertCircle, Percent, SlidersHorizontal, Clock } from "lucide-react";
+import {
+  BarChart3,
+  LineChart,
+  History,
+  Terminal,
+  Calendar,
+  DollarSign,
+  AlertCircle,
+  Percent,
+  SlidersHorizontal,
+  Clock,
+  Sparkles,
+} from "lucide-react";
 
 export default function Home() {
-  const [indices, setIndices] = useState<TickerInfo[]>([]);
+  const [indices, setIndices] = useState<TickerInfo[]>(DEFAULT_INDICES);
   const [selectedTicker, setSelectedTicker] = useState("^GSPC");
   const [startDate, setStartDate] = useState("2022-01-01");
   const [endDate, setEndDate] = useState("2024-01-01");
@@ -78,12 +90,17 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-emerald-500/20 flex flex-col">
+    <div className="min-h-screen bg-[#060709] text-zinc-100 font-sans antialiased selection:bg-emerald-500/25 selection:text-emerald-200 relative overflow-hidden flex flex-col">
+      {/* Dynamic Ambient Background Mesh Blobs */}
+      <div className="ambient-blob w-[600px] h-[600px] bg-emerald-600/15 top-[-100px] left-[-100px]" />
+      <div className="ambient-blob w-[500px] h-[500px] bg-cyan-600/12 top-[20%] right-[-150px]" />
+      <div className="ambient-blob w-[650px] h-[650px] bg-purple-600/10 bottom-[-150px] left-[25%]" />
+
       <Navbar />
 
-      <main className="flex-1 max-w-[1600px] w-full mx-auto p-4 space-y-4">
-        {/* Top Control Bar: Global Ticker, Timeframe & Fee Settings */}
-        <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-4">
+      <main className="relative z-10 flex-1 max-w-[1600px] w-full mx-auto px-4 py-3 space-y-4">
+        {/* Top Control Bar: Ticker Selection, Timeframe & Parameters */}
+        <div className="glass-panel rounded-2xl p-4 space-y-3.5 transition-all duration-300">
           <TickerSelector
             indices={indices}
             selectedTicker={selectedTicker}
@@ -92,102 +109,104 @@ export default function Home() {
             }}
           />
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-3 border-t border-zinc-800/60 text-xs">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-3 border-t border-white/5 text-xs">
             {/* Start Date */}
-            <div className="flex flex-col space-y-1">
-              <label className="text-zinc-400 font-medium flex items-center gap-1">
+            <div className="flex flex-col space-y-1.5">
+              <label className="text-zinc-400 font-semibold flex items-center gap-1.5 text-[11px]">
                 <Calendar className="w-3.5 h-3.5 text-zinc-500" /> Start Date
               </label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-200 font-mono focus:outline-none focus:border-emerald-500"
+                className="glass-input rounded-xl px-3 py-1.5 text-zinc-200 font-mono focus:outline-none"
               />
             </div>
 
             {/* End Date */}
-            <div className="flex flex-col space-y-1">
-              <label className="text-zinc-400 font-medium flex items-center gap-1">
+            <div className="flex flex-col space-y-1.5">
+              <label className="text-zinc-400 font-semibold flex items-center gap-1.5 text-[11px]">
                 <Calendar className="w-3.5 h-3.5 text-zinc-500" /> End Date
               </label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-200 font-mono focus:outline-none focus:border-emerald-500"
+                className="glass-input rounded-xl px-3 py-1.5 text-zinc-200 font-mono focus:outline-none"
               />
             </div>
 
             {/* Timeframe Interval */}
-            <div className="flex flex-col space-y-1">
-              <label className="text-zinc-400 font-medium flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-zinc-500" /> Timeframe
+            <div className="flex flex-col space-y-1.5">
+              <label className="text-zinc-400 font-semibold flex items-center gap-1.5 text-[11px]">
+                <Clock className="w-3.5 h-3.5 text-cyan-400" /> Timeframe
               </label>
               <select
                 value={interval}
                 onChange={(e) => setInterval(e.target.value)}
-                className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-200 font-mono focus:outline-none focus:border-emerald-500"
+                className="glass-input rounded-xl px-3 py-1.5 text-zinc-200 font-mono focus:outline-none cursor-pointer"
               >
-                <option value="1d">1 Day (Daily)</option>
-                <option value="1wk">1 Week</option>
-                <option value="1mo">1 Month</option>
-                <option value="1h">1 Hour (Intraday)</option>
-                <option value="15m">15 Minutes</option>
-                <option value="5m">5 Minutes</option>
+                <option value="1d" className="bg-zinc-950 text-zinc-200">1 Day (Daily)</option>
+                <option value="1wk" className="bg-zinc-950 text-zinc-200">1 Week</option>
+                <option value="1mo" className="bg-zinc-950 text-zinc-200">1 Month</option>
+                <option value="1h" className="bg-zinc-950 text-zinc-200">1 Hour (Intraday)</option>
+                <option value="15m" className="bg-zinc-950 text-zinc-200">15 Minutes</option>
+                <option value="5m" className="bg-zinc-950 text-zinc-200">5 Minutes</option>
               </select>
             </div>
 
             {/* Initial Capital */}
-            <div className="flex flex-col space-y-1">
-              <label className="text-zinc-400 font-medium flex items-center gap-1">
-                <DollarSign className="w-3.5 h-3.5 text-zinc-500" /> Capital ($)
+            <div className="flex flex-col space-y-1.5">
+              <label className="text-zinc-400 font-semibold flex items-center gap-1.5 text-[11px]">
+                <DollarSign className="w-3.5 h-3.5 text-emerald-400" /> Capital ($)
               </label>
               <input
                 type="number"
                 value={initialCapital}
                 onChange={(e) => setInitialCapital(Number(e.target.value))}
-                className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-200 font-mono focus:outline-none focus:border-emerald-500"
+                className="glass-input rounded-xl px-3 py-1.5 text-zinc-200 font-mono focus:outline-none"
               />
             </div>
 
             {/* Commission % */}
-            <div className="flex flex-col space-y-1">
-              <label className="text-zinc-400 font-medium flex items-center gap-1">
-                <Percent className="w-3.5 h-3.5 text-zinc-500" /> Commission (%)
+            <div className="flex flex-col space-y-1.5">
+              <label className="text-zinc-400 font-semibold flex items-center gap-1.5 text-[11px]">
+                <Percent className="w-3.5 h-3.5 text-amber-400" /> Commission (%)
               </label>
               <input
                 type="number"
                 step="0.01"
                 value={commissionPct}
                 onChange={(e) => setCommissionPct(Number(e.target.value))}
-                className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-200 font-mono focus:outline-none focus:border-emerald-500"
+                className="glass-input rounded-xl px-3 py-1.5 text-zinc-200 font-mono focus:outline-none"
               />
             </div>
 
             {/* Slippage % */}
-            <div className="flex flex-col space-y-1">
-              <label className="text-zinc-400 font-medium flex items-center gap-1">
-                <SlidersHorizontal className="w-3.5 h-3.5 text-zinc-500" /> Slippage (%)
+            <div className="flex flex-col space-y-1.5">
+              <label className="text-zinc-400 font-semibold flex items-center gap-1.5 text-[11px]">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-purple-400" /> Slippage (%)
               </label>
               <input
                 type="number"
                 step="0.01"
                 value={slippagePct}
                 onChange={(e) => setSlippagePct(Number(e.target.value))}
-                className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-200 font-mono focus:outline-none focus:border-emerald-500"
+                className="glass-input rounded-xl px-3 py-1.5 text-zinc-200 font-mono focus:outline-none"
               />
             </div>
           </div>
         </div>
 
-        {/* Error Alert */}
+        {/* Error Glass Banner */}
         {errorMsg && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl p-4 flex items-center gap-3 text-xs">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <div className="glass-card border-red-500/30 text-red-300 rounded-2xl p-4 flex items-center gap-3 text-xs shadow-lg shadow-red-950/20">
+            <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            </div>
             <div>
-              <p className="font-bold">Backtest Execution Error</p>
-              <p className="text-red-300">{errorMsg}</p>
+              <p className="font-bold text-red-200">Backtest Execution Error</p>
+              <p className="text-red-300/90">{errorMsg}</p>
             </div>
           </div>
         )}
@@ -195,7 +214,7 @@ export default function Home() {
         {/* Main Workbench Layout: Split Screen */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Left Column: Monaco Python IDE (5 Cols) */}
-          <div className="lg:col-span-5 h-[640px]">
+          <div className="lg:col-span-5 h-[650px]">
             <CodeEditor
               strategyType={strategyType}
               pythonCode={pythonCode}
@@ -218,30 +237,30 @@ export default function Home() {
             {backtestResult && <MetricsOverview metrics={backtestResult.metrics} />}
 
             {/* Chart & Analysis Tabs Container */}
-            <div className="flex-1 flex flex-col bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl min-h-[500px]">
+            <div className="flex-1 flex flex-col glass-panel rounded-2xl overflow-hidden shadow-2xl min-h-[510px]">
               {/* Tab Navigation Header */}
-              <div className="bg-zinc-900/80 p-2 border-b border-zinc-800 flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center space-x-1">
+              <div className="bg-zinc-950/70 p-2.5 border-b border-white/5 flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center space-x-1.5">
                   <button
                     type="button"
                     onClick={() => setActiveTab("candlesticks")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5 transition-all duration-200 ${
                       activeTab === "candlesticks"
-                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                        : "text-zinc-400 hover:text-zinc-200"
+                        ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                        : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]"
                     }`}
                   >
                     <BarChart3 className="w-3.5 h-3.5" />
-                    Stock Candlestick & Trades
+                    Candlestick & Trades
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setActiveTab("equity")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5 transition-all duration-200 ${
                       activeTab === "equity"
-                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                        : "text-zinc-400 hover:text-zinc-200"
+                        ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                        : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]"
                     }`}
                   >
                     <LineChart className="w-3.5 h-3.5" />
@@ -251,27 +270,27 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("trades")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5 transition-all duration-200 ${
                       activeTab === "trades"
-                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                        : "text-zinc-400 hover:text-zinc-200"
+                        ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                        : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]"
                     }`}
                   >
                     <History className="w-3.5 h-3.5" />
-                    Trade Log ({backtestResult?.trades.length || 0})
+                    Trades Log ({backtestResult?.trades.length || 0})
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setActiveTab("logs")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5 transition-all duration-200 ${
                       activeTab === "logs"
-                        ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                        : "text-zinc-400 hover:text-zinc-200"
+                        ? "bg-purple-500/15 text-purple-300 border border-purple-500/30 shadow-[0_0_12px_rgba(168,85,247,0.2)]"
+                        : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]"
                     }`}
                   >
                     <Terminal className="w-3.5 h-3.5" />
-                    Console Logs
+                    Console
                   </button>
                 </div>
               </div>
@@ -296,11 +315,21 @@ export default function Home() {
                 )}
 
                 {activeTab === "logs" && backtestResult && (
-                  <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 font-mono text-xs text-zinc-300 flex-1 overflow-y-auto space-y-1">
+                  <div className="glass-card rounded-2xl p-4 font-mono text-xs text-zinc-300 flex-1 overflow-y-auto space-y-1.5 max-h-[440px]">
                     {backtestResult.logs.map((log, idx) => (
-                      <div key={idx} className="flex items-start gap-2">
+                      <div key={idx} className="flex items-start gap-2.5">
                         <span className="text-zinc-600 select-none">[{idx + 1}]</span>
-                        <span className={log.includes("ERROR") ? "text-red-400" : log.includes("Complete") ? "text-emerald-400" : "text-zinc-300"}>
+                        <span
+                          className={
+                            log.includes("CRITICAL") || log.includes("ERROR")
+                              ? "text-red-400 font-semibold"
+                              : log.includes("Complete")
+                              ? "text-emerald-400 font-semibold"
+                              : log.includes("Executing") || log.includes("Loaded")
+                              ? "text-cyan-300"
+                              : "text-zinc-300"
+                          }
+                        >
                           {log}
                         </span>
                       </div>

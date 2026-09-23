@@ -12,6 +12,7 @@ import {
   Time,
 } from "lightweight-charts";
 import { CandlestickPoint, TradeRecord } from "@/lib/types";
+import { BarChart2, TrendingUp } from "lucide-react";
 
 interface CandlestickChartProps {
   candlesticks: CandlestickPoint[];
@@ -32,7 +33,6 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
   useEffect(() => {
     if (!chartContainerRef.current || candlesticks.length === 0) return;
 
-    // Clean up existing chart instance
     if (chartRef.current) {
       chartRef.current.remove();
       chartRef.current = null;
@@ -41,21 +41,31 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
     const container = chartContainerRef.current;
     const chart = createChart(container, {
       layout: {
-        background: { type: ColorType.Solid, color: "#09090b" }, // zinc-950
-        textColor: "#a1a1aa", // zinc-400
+        background: { type: ColorType.Solid, color: "#090a0f" },
+        textColor: "#71717a",
       },
       grid: {
-        vertLines: { color: "#18181b" }, // zinc-900
-        horzLines: { color: "#18181b" },
+        vertLines: { color: "rgba(255, 255, 255, 0.03)" },
+        horzLines: { color: "rgba(255, 255, 255, 0.03)" },
       },
       crosshair: {
         mode: 1,
+        vertLine: {
+          color: "rgba(255, 255, 255, 0.2)",
+          width: 1,
+          style: 3,
+        },
+        horzLine: {
+          color: "rgba(255, 255, 255, 0.2)",
+          width: 1,
+          style: 3,
+        },
       },
       rightPriceScale: {
-        borderColor: "#27272a", // zinc-800
+        borderColor: "rgba(255, 255, 255, 0.08)",
       },
       timeScale: {
-        borderColor: "#27272a",
+        borderColor: "rgba(255, 255, 255, 0.08)",
         timeVisible: true,
         secondsVisible: false,
       },
@@ -65,13 +75,13 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
 
     chartRef.current = chart;
 
-    // 1. Add Candlestick Series using v5 API (addSeries + CandlestickSeries)
+    // 1. Add Candlestick Series
     const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor: "#10b981", // emerald-500
-      downColor: "#ef4444", // red-500
+      upColor: "#10b981",
+      downColor: "#f43f5e",
       borderVisible: false,
       wickUpColor: "#10b981",
-      wickDownColor: "#ef4444",
+      wickDownColor: "#f43f5e",
     });
 
     const formattedCandles = candlesticks.map((item) => ({
@@ -84,12 +94,12 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
 
     candleSeries.setData(formattedCandles);
 
-    // 2. Add Trade Execution Markers using v5 createSeriesMarkers plugin API
+    // 2. Add Trade Execution Markers
     if (trades.length > 0) {
       const markers: SeriesMarker<Time>[] = trades.map((t) => ({
         time: t.date as Time,
         position: t.type === "BUY" ? "belowBar" : "aboveBar",
-        color: t.type === "BUY" ? "#10b981" : "#ef4444",
+        color: t.type === "BUY" ? "#10b981" : "#f43f5e",
         shape: t.type === "BUY" ? "arrowUp" : "arrowDown",
         text: `${t.type} @ $${t.price}`,
       }));
@@ -98,18 +108,18 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
       createSeriesMarkers(candleSeries, markers);
     }
 
-    // 3. Add Volume Series using v5 API (addSeries + HistogramSeries)
+    // 3. Add Volume Series
     const volumeSeries = chart.addSeries(HistogramSeries, {
-      color: "#27272a",
+      color: "rgba(255, 255, 255, 0.08)",
       priceFormat: {
         type: "volume",
       },
-      priceScaleId: "", // Overlay on main chart
+      priceScaleId: "",
     });
 
     volumeSeries.priceScale().applyOptions({
       scaleMargins: {
-        top: 0.8, // Volume takes lower 20%
+        top: 0.8,
         bottom: 0,
       },
     });
@@ -117,15 +127,13 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
     const formattedVolume = candlesticks.map((item) => ({
       time: item.time as Time,
       value: item.volume,
-      color: item.close >= item.open ? "#10b98122" : "#ef444422",
+      color: item.close >= item.open ? "rgba(16, 185, 129, 0.18)" : "rgba(244, 63, 94, 0.18)",
     }));
 
     volumeSeries.setData(formattedVolume);
 
-    // Fit content on time scale
     chart.timeScale().fitContent();
 
-    // Responsive resize handler
     const handleResize = () => {
       if (container && chart) {
         chart.applyOptions({ width: container.clientWidth });
@@ -144,20 +152,26 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
   }, [candlesticks, trades]);
 
   return (
-    <div className="flex flex-col h-full bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-xl">
-      <div className="p-3 bg-zinc-900/60 border-b border-zinc-800 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <span className="font-bold text-sm text-zinc-100">{tickerName}</span>
-          <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
-            {ticker}
-          </span>
+    <div className="flex flex-col h-full glass-card rounded-2xl overflow-hidden shadow-2xl">
+      <div className="p-3.5 bg-zinc-950/70 border-b border-white/5 flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center space-x-2.5">
+          <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <BarChart2 className="w-4 h-4" />
+          </div>
+          <div>
+            <span className="font-bold text-sm text-zinc-100">{tickerName}</span>
+            <span className="ml-2 text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg shadow-sm">
+              {ticker}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center space-x-4 text-xs font-medium text-zinc-400">
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span> BUY Execution
+
+        <div className="flex items-center space-x-4 text-xs font-semibold text-zinc-400">
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]" /> BUY Marker
           </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-red-500"></span> SELL Execution
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_8px_#f43f5e]" /> SELL Marker
           </span>
         </div>
       </div>
